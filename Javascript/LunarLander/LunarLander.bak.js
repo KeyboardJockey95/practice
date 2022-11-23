@@ -1,13 +1,25 @@
-// Lunar Lander JavaScript source code
+// Lunar Lander
 
 var canvas = document.getElementById("screen");
+
+// leaves scoll bars and some kind of border around the edge. F11 is still not maximal
+//canvas.width = innerWidth;
+//canvas.height = innerHeight;
+
+// canvas has requestFullscreen, but it must be triggered by a user action
+//if (canvas.requestFullscreen) {
+//    alert("Canvas has full screen method");
+//}
+//canvas.requestFullscreen();
+
 var ctx = canvas.getContext("2d");
-var countDownSecs = 100
 
-landerRadius = 6;
+const landerRadius = 6;
 
+var startMS = Date.now();
 var x = canvas.clientWidth / 2;
 var y = landerRadius;
+var thrust = 0;
 var dX = 0;
 var dY = 0;
 
@@ -25,34 +37,8 @@ setInterval(draw, 15);
 function draw() {
     drawBackground();
     drawLander();
-    drawTimer();
-    countDownSecs--;
-
-    x += dX;
-    if (x > XMAX) {
-        x = XMAX;
-        dX = 0;
-    }
-    if (x < XMIN) {
-        x = XMIN;
-        dX = 0;
-    }
-
-    if ((y < YMAX) || (dY < 0)) {
-        dY += .01 // this is the 'gravity' factor
-//        y += Math.floor(dY);
-        y += dY;
-
-        if (y > YMAX) {
-            y = YMAX;
-            dY = 0;
-        }
-    }
-
-    if (y < YMIN) {
-        y = YMIN;
-        dY = 0;
-    }
+    drawDebugOutput();
+    computeNextPosition();
 }
 
 function drawBackground() {
@@ -68,18 +54,47 @@ function drawLander() {
     ctx.stroke();
 
     // draw the "fire"
-//    if (dY < 0) {
+    if (thrust > 0) {
         ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x, y + (-50 * dY));
+        ctx.moveTo(x, y + landerRadius);
+//        ctx.lineTo(x, y + (-50 * dY));
+        ctx.lineTo(x, y + (thrust));
         ctx.stroke();
-//    }
+    }
 }
 
-function drawTimer() {
+function drawDebugOutput() {
     ctx.font = "12px Courier Bold";
     ctx.fillStyle = "white";
-    ctx.fillText("dY: " + dY, 5, 15);
+    ctx.fillText("thrust: " + thrust, 5, 15);
+}
+
+function computeNextPosition() {
+    x += dX;
+    if (x > XMAX) {
+        x = XMAX;
+        dX = 0;
+    }
+    if (x < XMIN) {
+        x = XMIN;
+        dX = 0;
+    }
+
+    if ((y < YMAX) || (dY < 0)) {
+//        dY += .01 // this is the 'gravity' factor
+        //        y += Math.floor(dY);
+        y += dY;
+
+        if (y > YMAX) {
+            y = YMAX;
+            dY = 0;
+        }
+    }
+
+    if (y < YMIN) {
+        y = YMIN;
+        dY = 0;
+    }
 }
 
 document.onkeydown = function (e) {
@@ -91,7 +106,7 @@ document.onkeydown = function (e) {
             break;
         case 38:
 //            dY = (dY == 5) ? 0 : -5;
-            dY -= .1; // this is the 'thrust' factor
+//            dY -= .1; // this is the 'thrust' factor
 //            alert('up dn');
             break;
         case 39:

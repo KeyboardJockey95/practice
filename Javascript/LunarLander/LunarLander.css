@@ -1,0 +1,10 @@
+body {
+    background-color: lightgrey;
+}
+
+/* this seems to center the canvas horizontally */
+canvas {
+    margin-right: auto;
+    margin-left: auto;
+    display: block;
+}
